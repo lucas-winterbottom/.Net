@@ -6,52 +6,50 @@ namespace Calculator
 {
     class MainClass
     {
-        public static string symbolcheck = "*-+/%X^1234567890calcu ";
+        public static string symbolcheck = "*-+/%X^1234567890calc() ";
         public static List<Item> rhs = new List<Item>();
         public static List<Item> lhs = new List<Item>();
 
         public static void Main(string[] args)
         {
             TakeInput();
-            foreach (Item i in rhs)
-            {
-                Console.WriteLine(i.GetName());
-            }
         }
 
-        private static void CheckInput()
+        private static void ProcessInput()
         {
+            foreach(Item i in rhs){
+                Console.WriteLine(i.GetName());
+            }
+
             if(rhs[0].GetName().Equals("calc")){
                 rhs.RemoveAt(0);
-				foreach (Item i in rhs)
-				{
-                    if (!i.GetName().Contains("5"))
-					{
-						Console.WriteLine("Error in input");
-                        TakeInput();
-						break;
-					}
-				}
-            }
+				Console.WriteLine("Valid input");
+			}
             else{
                 Console.WriteLine("Please enter valid input");
+                ClearData();
                 TakeInput();
             }
         }
 
+        public static void ClearData(){
+			rhs.Clear();
+			lhs.Clear();
+        }
 
         public static void TakeInput()
         {
             List<char> input = Console.ReadLine().ToList();
             string current = "";
-            rhs = new List<Item>();
-            lhs = new List<Item>();
+
             bool inBrackets = false;
             foreach (char c in input)
             {
                 if(!symbolcheck.Contains(c)){
+					Console.WriteLine("Please enter valid input");
+                    ClearData();
 					TakeInput();
-					break;
+                    return;
                 }
                 if (inBrackets)
                 {
@@ -82,7 +80,7 @@ namespace Calculator
                 }
             }
             rhs.Add(new Item(current, ItemType.number));
-			CheckInput();
+			ProcessInput();
 		}
 
     }
