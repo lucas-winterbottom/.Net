@@ -9,6 +9,7 @@ namespace Calculator
         private static List<Term> rhs;
         private static List<Term> lhs;
         private static List<string> input;
+        private bool isNegative = false;
         private bool isLhs = false;
         private static string symbolcheck = "*-+/%X^1234567890calc()= ";
 
@@ -42,6 +43,7 @@ namespace Calculator
 
         private void PrintParsedInput()
         {
+            Console.WriteLine("PrintParsedInput");
             Console.WriteLine("LHS");
             foreach (Term i in lhs)
             {
@@ -60,32 +62,30 @@ namespace Calculator
         {
             double numericalValue;
             Term temp = new Term();
+            isNegative = false;
             foreach (string s in input)
             {
                 if (s.Contains("()"))
                 {
                     temp.Type = TermType.brackets;
-                    temp.Pronumeral = s;
-                    AddItem(temp);
+                    AddTerm(temp);
                     temp = new Term();
                 }
                 else if (s.Contains("X^2"))
                 {
                     temp.Type = TermType.sqVariable;
-                    temp.Pronumeral = "X^2";
+
                     ProcessPronumeral(s, temp);
                     temp = new Term();
                 }
                 else if (s.Contains("X"))
                 {
                     temp.Type = TermType.variable;
-                    temp.Pronumeral = "X";
                     ProcessPronumeral(s, temp);
                     temp = new Term();
                 }
                 else if (s.Equals("+"))
                 {
-                    temp.Sign = Sign.POS;
                 }
                 else if (s.Equals("/"))
                 {
@@ -93,7 +93,8 @@ namespace Calculator
                 }
                 else if (s.Equals("-"))
                 {
-                    temp.Sign = Sign.NEG;
+                    if (isNegative) isNegative = false;
+                    else isNegative = true;
                 }
                 else if (s.Equals("*"))
                 {
@@ -110,9 +111,9 @@ namespace Calculator
                 }
                 else if (Double.TryParse(s, out numericalValue))
                 {
-                    if (temp.Sign == Sign.POS) temp.Coeff = numericalValue;
-                    else temp.Coeff = -numericalValue;
-                    AddItem(temp);
+                    if (isNegative) temp.Coeff = -numericalValue;
+                    else temp.Coeff = numericalValue;
+                    AddTerm(temp);
                     temp = new Term();
                 }
                 else
@@ -170,7 +171,7 @@ namespace Calculator
             else ThrowError("Command does not contain calc");
         }
 
-        private void AddItem(Term test)
+        private void AddTerm(Term test)
         {
             if (isLhs)
             {
@@ -180,6 +181,7 @@ namespace Calculator
             {
                 rhs.Add(test);
             }
+            isNegative = false;
         }
 
 
@@ -196,10 +198,10 @@ namespace Calculator
                 {
                     if (!tempno.Equals(""))
                     {
-                        if (temp.Sign == Sign.NEG) temp.Coeff = -Double.Parse(tempno);
+                        if (isNegative) temp.Coeff = -Double.Parse(tempno);
                         else temp.Coeff = Double.Parse(tempno);
                     }
-                    AddItem(temp);
+                    AddTerm(temp);
                 }
             }
         }

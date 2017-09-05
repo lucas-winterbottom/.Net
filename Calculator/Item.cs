@@ -1,23 +1,18 @@
-﻿using System;
+﻿﻿using System;
 namespace Calculator
 {
     public class Term
     {
-        private string pronumeral;
         private TermType type;
         private double coeff;
-        private Sign sign;
         private Modifier modifier;
 
         public Modifier Modifier { get => modifier; set => modifier = value; }
-        public Sign Sign { get => sign; set => sign = value; }
         public double Coeff { get => coeff; set => this.coeff = value; }
-        public string Pronumeral { get => pronumeral; set => pronumeral = value; }
         public TermType Type { get => type; set => type = value; }
 
         public Term()
         {
-            sign = Sign.POS;
             coeff = 1;
             type = TermType.number;
         }
@@ -33,31 +28,39 @@ namespace Calculator
             else if (modifier == Modifier.MUL) s += "*";
             else if (modifier == Modifier.MOD) s += "%";
             else if (modifier == Modifier.NONE) s += "";
-
-            if (sign == Sign.POS) s += "+";
+            if(coeff>0)s+="+";
             s += coeff;
-            s += pronumeral;
-            s += " ";
-            // s += type;
+            if (type == TermType.variable) s += "X";
+            if (type == TermType.sqVariable) s += "X^2";
+
             return s;
 
         }
 
         internal void InvertValue()
         {
-            if (sign == Sign.POS)
-            {
-                sign = Sign.NEG;
-            }
-            else sign = Sign.POS;
             coeff = -coeff;
         }
+
+        internal bool IsVariable()
+        {
+            return type == TermType.variable;
+        }
+        internal bool IsSqVariable()
+        {
+            return type == TermType.sqVariable;
+        }
+        internal bool IsBrackets()
+        {
+            return type == TermType.brackets;
+        }
+        internal bool IsNumberz()
+        {
+            return type == TermType.number;
+        }
+
     }
 
-    public enum Sign
-    {
-        POS, NEG
-    }
 
     public enum Modifier
     {
