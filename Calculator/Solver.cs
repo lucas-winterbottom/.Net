@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿﻿﻿﻿using System;
 using System.Collections.Generic;
 
 namespace Calculator
@@ -11,7 +11,6 @@ namespace Calculator
         {
             this.lhs = lhs;
             this.rhs = rhs;
-            Console.WriteLine(2/5);
         }
 
         public void Solve()
@@ -96,7 +95,7 @@ namespace Calculator
             }
             PrintOutput("BalanceLeft");
         }
-
+//ALso consider overloading + and Minus)
         public void PlusMinus()
         {
             lhs.Sort((x, y) => x.Type.CompareTo(y.Type));
