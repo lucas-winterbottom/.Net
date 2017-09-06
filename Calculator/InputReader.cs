@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -57,7 +57,6 @@ namespace Calculator
         }
 
         //Fix issue with multiple -- ++ etc etc
-        //Fix issue with -ve pronumerals
         private void ParseInput()
         {
             double numericalValue;
@@ -74,7 +73,6 @@ namespace Calculator
                 else if (s.Contains("X^2"))
                 {
                     temp.Type = TermType.sqVariable;
-
                     ProcessPronumeral(s, temp);
                     temp = new Term();
                 }
@@ -136,6 +134,8 @@ namespace Calculator
             List<char> consoleInput = Console.ReadLine().ToList();
             string current = "";
             bool inBrackets = false;
+            bool hasEquals = false;
+            bool hasX = false;
             foreach (char c in consoleInput)
             {
                 if (!symbolcheck.Contains(c))
@@ -161,6 +161,14 @@ namespace Calculator
                         inBrackets = false;
                         current = "";
                         break;
+                    case '=':
+                        hasEquals = true;
+                        current += c;
+                        break;
+                    case 'X':
+                        hasX = true;
+                        current += c;
+                        break;
                     default:
                         current += c;
                         break;
@@ -169,6 +177,8 @@ namespace Calculator
             if (!current.Equals("")) input.Add(current);
             if (input[0].Equals("calc")) RemoveCalc();
             else ThrowError("Command does not contain calc");
+            if (!hasEquals) ThrowError("Invalid input formula missing =");
+            if (!hasX) ThrowError("Invalid input formula missing an X");
         }
 
         private void AddTerm(Term test)
@@ -201,25 +211,16 @@ namespace Calculator
                         if (isNegative) temp.Coeff = -Double.Parse(tempno);
                         else temp.Coeff = Double.Parse(tempno);
                     }
-                    AddTerm(temp);
                 }
             }
+            AddTerm(temp);
+
         }
 
         private void ThrowError(string msg)
         {
-            Console.WriteLine("Please enter valid input");
             Console.WriteLine(msg);
-            ClearData();
-            //make this method that calls all input functions
-        }
-        //Clears data from all the lists
-        private void ClearData()
-        {
-            rhs.Clear();
-            lhs.Clear();
-            input.Clear();
-            InputToStrings();
+            Environment.Exit(0);
         }
 
         public void RemoveCalc()

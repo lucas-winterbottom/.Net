@@ -17,6 +17,12 @@ namespace Calculator
             type = TermType.number;
         }
 
+        public Term(double v)
+        {
+            this.coeff = v;
+            type = TermType.number;
+        }
+
         public override string ToString()
         {
             string s = "";
@@ -28,7 +34,7 @@ namespace Calculator
             else if (modifier == Modifier.MUL) s += "*";
             else if (modifier == Modifier.MOD) s += "%";
             else if (modifier == Modifier.NONE) s += "";
-            if(coeff>0)s+="+";
+            if (coeff > 0) s += "+";
             s += coeff;
             if (type == TermType.variable) s += "X";
             if (type == TermType.sqVariable) s += "X^2";
@@ -59,6 +65,46 @@ namespace Calculator
             return type == TermType.number;
         }
 
+        ///<summary>
+        ///Handles the multiplication of term such that it retains the x or makes it become x^2 depending on the circumstances
+        ///</summary>
+        public static Term operator *(Term t1, Term t2)
+        {
+            Term tempTerm = new Term();
+            tempTerm.Coeff = t1.Coeff * t2.Coeff;
+            if (t1.IsVariable() && t2.IsVariable()) tempTerm.Type = TermType.sqVariable;
+            else if (t1.IsNumberz() && t2.IsVariable() || (t1.IsVariable() && t2.IsNumberz())) tempTerm.Type = TermType.variable;
+            else if (t1.IsNumberz() && t2.IsSqVariable() || t1.IsSqVariable() && t2.IsNumberz()) tempTerm.Type = TermType.sqVariable;
+            else tempTerm.Type = TermType.number;
+            return tempTerm;
+        }
+
+        public static Term operator /(Term t1, Term t2)
+        {
+            Term tempTerm = new Term();
+            if (t2.Coeff == 0) ThrowError(new DivideByZeroException());
+            tempTerm.Coeff = t1.Coeff / t2.Coeff;
+            if (t1.IsVariable() && t2.IsVariable()) tempTerm.Type = TermType.number;
+            else if (t1.IsNumberz() && t2.IsVariable() || t1.IsVariable() && t2.IsNumberz()) tempTerm.Type = TermType.variable;
+            else if (t1.IsNumberz() && t2.IsSqVariable() || (t1.IsSqVariable() && t2.IsNumberz())) tempTerm.Type = TermType.sqVariable;
+            else tempTerm.Type = TermType.number;
+            return tempTerm;
+        }
+
+        public static Term operator %(Term t1, Term t2)
+        {
+            Term tempTerm = new Term();
+            if (t2.Coeff == 0) ThrowError(new DivideByZeroException());
+            tempTerm.Coeff = t1.Coeff * t2.Coeff;
+            if (t1.IsVariable() || t2.IsVariable() || t1.IsSqVariable() || t2.IsSqVariable()) ThrowError(new Exception("Cannot Modulus using pronumerals"));
+            else tempTerm.Type = TermType.number;
+            return tempTerm;
+        }
+
+        private static void ThrowError(Exception e)
+        {
+            Console.WriteLine(e.ToString());
+        }
     }
 
 

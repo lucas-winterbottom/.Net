@@ -11,6 +11,7 @@ namespace Calculator
         {
             this.lhs = lhs;
             this.rhs = rhs;
+            Console.WriteLine(2/5);
         }
 
         public void Solve()
@@ -21,11 +22,42 @@ namespace Calculator
             MovePronumeralsLeft();
             BalanceLeft();
             PlusMinus();
-            //make choice here
-            DivideX();
-            //Squareroot
-            //quadratic formula
+            switch (DecideMethod())
+            {
+                case 1:
+                    DivideX();
+                    break;
+                case 2:
+                    DivideX();
+                    Squareroot();
+                    break;
+                case 3:
+                    //SolveQuadratic()
+                    break;
+            }
             Console.ReadLine();
+        }
+
+        private void Squareroot()
+        {
+            throw new NotImplementedException();
+        }
+
+        private int DecideMethod()
+        {
+            int i = 0;
+            foreach (Term t in lhs)
+            {
+                if (t.Type == TermType.variable)
+                {
+                    i++;
+                }
+                if (t.Type == TermType.sqVariable)
+                {
+                    i += 2;
+                }
+            }
+            return i;
         }
 
         private void MovePronumeralsLeft()
@@ -44,7 +76,7 @@ namespace Calculator
 
         private void DivideX()
         {
-
+            if(rhs.Count==0) rhs.Add(new Term(0));
             rhs[0].Coeff = rhs[0].Coeff / lhs[0].Coeff;
             lhs[0].Coeff = 1;
             PrintOutput("DivideX");
@@ -95,39 +127,25 @@ namespace Calculator
         {
             for (int i = 1; i < side.Count; i++)
             {
-                //Handle x/x x*x for all these types
-                if (side[i].Modifier == Modifier.MUL)
+                switch (side[i].Modifier)
                 {
-                    if (side[i - 1].Type != TermType.number)
-                    {
-                        side[i].Type = side[i - 1].Type;
-                    }
-                    side[i].Modifier = Modifier.NONE;
-                    side[i].Coeff *= side[i - 1].Coeff;
-                    side.RemoveAt(i - 1);
-                    i--;
-                }
-                else if (side[i].Modifier == Modifier.DIV)
-                {
-                    if (side[i - 1].Type == TermType.number)
-                    {
-                        side[i].Type = side[i - 1].Type;
-                    }
-                    side[i].Coeff = side[i - 1].Coeff / side[i].Coeff;
-                    side[i].Modifier = Modifier.NONE;
-                    side.RemoveAt(i - 1);
-                    i--;
-                }
-                else if (side[i].Modifier == Modifier.MOD)
-                {
-                    if (side[i - 1].Type == TermType.number)
-                    {
-                        side[i].Type = side[i - 1].Type;
-                    }
-                    side[i].Coeff = side[i - 1].Coeff % side[i].Coeff;
-                    side[i].Modifier = Modifier.NONE;
-                    side.RemoveAt(i - 1);
-                    i--;
+                    case Modifier.MUL:
+                        side[i] = side[i] * side[i - 1];
+                        side.RemoveAt(i - 1);
+                        i--;
+                        break;
+                    case Modifier.MOD:
+                        side[i] = side[i - 1] % side[i];
+                        side.RemoveAt(i - 1);
+                        i--;
+                        break;
+                    case Modifier.DIV:
+                        side[i] = side[i - 1] / side[i];
+                        side.RemoveAt(i - 1);
+                        i--;
+                        break;
+                    default:
+                        break;
                 }
             }
             PrintOutput("MulDiv");
