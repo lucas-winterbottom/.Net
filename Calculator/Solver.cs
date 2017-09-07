@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 
 namespace Calculator
@@ -31,15 +31,40 @@ namespace Calculator
                     Squareroot();
                     break;
                 case 3:
-                    //SolveQuadratic()
+                    SolveQuadratic();
                     break;
             }
             Console.ReadLine();
         }
 
+        private void SolveQuadratic()
+        {
+            rhs[0].InvertValue();
+            lhs.Add(rhs[0]);
+            rhs.RemoveAt(0);
+            PrintOutput("Prep Quadratic");
+            int a = Convert.ToInt32(lhs[0].Coeff);
+            int b = Convert.ToInt32(lhs[1].Coeff);
+            int c = Convert.ToInt32(lhs[2].Coeff);
+
+            double sqrtpart = b * b - 4 * a * c;
+            double x1 = (b + Math.Sqrt(sqrtpart)) / 2 * a;
+            double x2 = (b - Math.Sqrt(sqrtpart)) / 2 * a;
+            PrintXs(x1, x2);
+
+        }
+
+        private void PrintXs(double x1, double x2)
+        {
+            if (x1.Equals(Double.NaN) || x2.Equals(Double.NaN)) ErrorHandler.ExitWithMessage(Error.NaN);
+            Console.WriteLine("X = " + Convert.ToInt32(x1) + "," + Convert.ToInt32(x2));
+        }
+
         private void Squareroot()
         {
-            throw new NotImplementedException();
+            double x1 = Math.Sqrt(rhs[0].Coeff);
+            double x2 = -Math.Sqrt(rhs[0].Coeff);
+            PrintXs(x1, x2);
         }
 
         private int DecideMethod()
@@ -75,7 +100,7 @@ namespace Calculator
 
         private void DivideX()
         {
-            if(rhs.Count==0) rhs.Add(new Term(0));
+            if (rhs.Count == 0) rhs.Add(new Term(0));
             rhs[0].Coeff = rhs[0].Coeff / lhs[0].Coeff;
             lhs[0].Coeff = 1;
             PrintOutput("DivideX");
@@ -95,10 +120,10 @@ namespace Calculator
             }
             PrintOutput("BalanceLeft");
         }
-//ALso consider overloading + and Minus)
+        //ALso consider overloading + and Minus)
         public void PlusMinus()
         {
-            lhs.Sort((x, y) => x.Type.CompareTo(y.Type));
+            lhs.Sort((x, y) => y.Type.CompareTo(x.Type));
             //LHS Plus (Should be only pronumerals)
             for (int i = 1; i < lhs.Count; i++)
             {
@@ -112,7 +137,7 @@ namespace Calculator
             ///RHS Plus
             for (int i = 1; i < rhs.Count; i++)
             {
-                if (rhs[i].Modifier == Modifier.NONE && rhs[i].IsNumberz() && rhs[i - 1].IsNumberz())
+                if (rhs[i].IsNumberz() && rhs[i - 1].IsNumberz())
                 {
                     rhs[i].Coeff += rhs[i - 1].Coeff;
                     rhs.RemoveAt(i - 1);
@@ -163,6 +188,7 @@ namespace Calculator
                 Console.Write(i.ToString());
             }
             Console.WriteLine();
+            Console.WriteLine("----------------");
         }
 
     }

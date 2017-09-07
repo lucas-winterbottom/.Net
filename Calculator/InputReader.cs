@@ -116,7 +116,7 @@ namespace Calculator
                 }
                 else
                 {
-                    ThrowError("error in input -- ParseInput()");
+                    ErrorHandler.ExitWithMessage(Error.InvalidCharacters);
                 }
             }
         }
@@ -140,7 +140,7 @@ namespace Calculator
             {
                 if (!symbolcheck.Contains(c))
                 {
-                    ThrowError("Invalid character found in input");
+                    ErrorHandler.ExitWithMessage(Error.InvalidCharacters);
                 }
                 switch (c)
                 {
@@ -176,9 +176,9 @@ namespace Calculator
             }
             if (!current.Equals("")) input.Add(current);
             if (input[0].Equals("calc")) RemoveCalc();
-            else ThrowError("Command does not contain calc");
-            if (!hasEquals) ThrowError("Invalid input formula missing =");
-            if (!hasX) ThrowError("Invalid input formula missing an X");
+            else ErrorHandler.ExitWithMessage(Error.MissingCalc);
+            if (!hasEquals) ErrorHandler.ExitWithMessage(Error.NoEquals);
+            if (!hasX) ErrorHandler.ExitWithMessage(Error.NoPronumeral);
         }
 
         private void AddTerm(Term test)
@@ -215,12 +215,6 @@ namespace Calculator
             }
             AddTerm(temp);
 
-        }
-
-        private void ThrowError(string msg)
-        {
-            Console.WriteLine(msg);
-            Environment.Exit(0);
         }
 
         public void RemoveCalc()

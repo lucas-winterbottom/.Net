@@ -82,7 +82,7 @@ namespace Calculator
         public static Term operator /(Term t1, Term t2)
         {
             Term tempTerm = new Term();
-            if (t2.Coeff == 0) ThrowError(new DivideByZeroException());
+            if (t2.Coeff == 0) ErrorHandler.ExitWithMessage(Error.DivByZero);
             tempTerm.Coeff = t1.Coeff / t2.Coeff;
             if (t1.IsVariable() && t2.IsVariable()) tempTerm.Type = TermType.number;
             else if (t1.IsNumberz() && t2.IsVariable() || t1.IsVariable() && t2.IsNumberz()) tempTerm.Type = TermType.variable;
@@ -94,16 +94,11 @@ namespace Calculator
         public static Term operator %(Term t1, Term t2)
         {
             Term tempTerm = new Term();
-            if (t2.Coeff == 0) ThrowError(new DivideByZeroException());
+            if (t2.Coeff == 0) ErrorHandler.ExitWithMessage(Error.DivByZero);
             tempTerm.Coeff = t1.Coeff * t2.Coeff;
-            if (t1.IsVariable() || t2.IsVariable() || t1.IsSqVariable() || t2.IsSqVariable()) ThrowError(new Exception("Cannot Modulus using pronumerals"));
+            if (t1.IsVariable() || t2.IsVariable() || t1.IsSqVariable() || t2.IsSqVariable()) ErrorHandler.ExitWithMessage(Error.DivByZero);
             else tempTerm.Type = TermType.number;
             return tempTerm;
-        }
-
-        private static void ThrowError(Exception e)
-        {
-            Console.WriteLine(e.ToString());
         }
     }
 

@@ -37,6 +37,7 @@
     <Compile Include="InputReader.cs" />
     <Compile Include="Item.cs" />
     <Compile Include="Solver.cs" />
+    <Compile Include="ErrorHandler.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>
